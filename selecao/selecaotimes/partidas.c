@@ -12,16 +12,29 @@ static void aumentarCapacidade(VetPartidas *vet) {
     }
 }
 
-static void atualizarEstatisticas(Time *casa, Time *fora, int golsCasa, int golsFora) {
-    casa->golsPro     += golsCasa;
-    casa->golsContra  += golsFora;
-    fora->golsPro     += golsFora;
-    fora->golsContra  += golsCasa;
+static void atualizarEstatisticas(Time *casa, Time *fora,
+                                  int golsCasa, int golsFora,
+                                  int golsContraCasa, int golsContraFora) {
+    // gols marcados considerando os gols contra do adversário
+    casa->golsPro     += golsCasa + golsContraFora;
+    fora->golsPro     += golsFora + golsContraCasa;
 
-    if (golsCasa > golsFora) {
+    // gols sofridos considerando os gols contra próprios
+    casa->golsSofridos += golsFora + golsContraCasa;
+    fora->golsSofridos += golsCasa + golsContraFora;
+
+    // registrar gols contra
+    casa->golsContra += golsContraCasa;
+    fora->golsContra += golsContraFora;
+
+    // pontos / vitórias / derrotas / empates
+    int totalCasa = golsCasa + golsContraFora;
+    int totalFora = golsFora + golsContraCasa;
+
+    if (totalCasa > totalFora) {
         casa->vitorias++; casa->pontos += 3;
         fora->derrotas++;
-    } else if (golsCasa < golsFora) {
+    } else if (totalCasa < totalFora) {
         fora->vitorias++; fora->pontos += 3;
         casa->derrotas++;
     } else {
@@ -66,6 +79,7 @@ void inserirPartida(VetPartidas *vet, VetTimes *times) {
     scanf("%d %d %d", &p.data.dia, &p.data.mes, &p.data.ano);
 
     p.golsCasa = p.golsFora = 0;
+    p.golsContraCasa = p.golsContraFora = 0;
     p.disputada = 0;
 
     vet->itens[vet->qtd++] = p;
@@ -90,8 +104,9 @@ void listarPartidas(VetPartidas *vet, VetTimes *times) {
         if (idxFora != -1) strcpy(nomeFora, times->itens[idxFora].nome);
 
         if (p.disputada) {
-            printf("ID:%d | %s %d x %d %s | Data: %02d/%02d/%04d\n",
-                   p.id, nomeCasa, p.golsCasa, p.golsFora, nomeFora,
+            printf("ID:%d | %s %d (%d GC) x %d (%d GC) %s | Data: %02d/%02d/%04d\n",
+                   p.id, nomeCasa, p.golsCasa, p.golsContraCasa,
+                   p.golsFora, p.golsContraFora, nomeFora,
                    p.data.dia, p.data.mes, p.data.ano);
         } else {
             printf("ID:%d | %s vs %s | Data: %02d/%02d/%04d (Agendada)\n",
@@ -132,8 +147,12 @@ void atualizarPartida(VetPartidas *vet, VetTimes *times) {
         }
         printf("Gols do time da casa: ");
         scanf("%d", &p->golsCasa);
+        printf("Gols contra do time da casa: ");
+        scanf("%d", &p->golsContraCasa);
         printf("Gols do time visitante: ");
         scanf("%d", &p->golsFora);
+        printf("Gols contra do time visitante: ");
+        scanf("%d", &p->golsContraFora);
 
         p->disputada = 1;
 
@@ -142,7 +161,8 @@ void atualizarPartida(VetPartidas *vet, VetTimes *times) {
 
         if (idxCasa != -1 && idxFora != -1) {
             atualizarEstatisticas(&times->itens[idxCasa], &times->itens[idxFora],
-                                  p->golsCasa, p->golsFora);
+                                  p->golsCasa, p->golsFora,
+                                  p->golsContraCasa, p->golsContraFora);
         }
 
         printf("Resultado registrado!\n");
@@ -177,11 +197,12 @@ void carregarPartidas(VetPartidas *vet, const char *nomeArquivo) {
     if (!f) return;
 
     Partida p;
-    while (fscanf(f, "%d;%d;%d;%d;%d;%d;%d;%d;%d\n",
+    while (fscanf(f, "%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d\n",
                   &p.id, &p.idCasa, &p.idFora,
                   &p.golsCasa, &p.golsFora,
+                  &p.golsContraCasa, &p.golsContraFora,
                   &p.data.dia, &p.data.mes, &p.data.ano,
-                  &p.disputada) == 9) {
+                  &p.disputada) == 11) {
         if (vet->qtd == vet->cap) aumentarCapacidade(vet);
         vet->itens[vet->qtd++] = p;
     }
@@ -198,12 +219,15 @@ void salvarPartidas(VetPartidas *vet, const char *nomeArquivo) {
 
     for (int i = 0; i < vet->qtd; i++) {
         Partida p = vet->itens[i];
-        fprintf(f, "%d;%d;%d;%d;%d;%d;%d;%d;%d\n",
+        fprintf(f, "%d;%d;%d;%d;%d;%d;%d;%d;%d;%d;%d\n",
                 p.id, p.idCasa, p.idFora,
                 p.golsCasa, p.golsFora,
+                p.golsContraCasa, p.golsContraFora,
                 p.data.dia, p.data.mes, p.data.ano,
                 p.disputada);
     }
 
     fclose(f);
 }
+
+
