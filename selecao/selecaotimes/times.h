@@ -8,8 +8,9 @@ typedef struct {
     int vitorias;
     int empates;
     int derrotas;
-    int golsPro;
-    int golsContra;
+    int golsPro;    
+    int golsSofridos;  
+    int golsContra;    
 } Time;
 
 typedef struct {
