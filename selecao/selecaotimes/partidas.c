@@ -15,19 +15,16 @@ static void aumentarCapacidade(VetPartidas *vet) {
 static void atualizarEstatisticas(Time *casa, Time *fora,
                                   int golsCasa, int golsFora,
                                   int golsContraCasa, int golsContraFora) {
-    // gols marcados considerando os gols contra do adversário
+    
     casa->golsPro     += golsCasa + golsContraFora;
     fora->golsPro     += golsFora + golsContraCasa;
 
-    // gols sofridos considerando os gols contra próprios
     casa->golsSofridos += golsFora + golsContraCasa;
     fora->golsSofridos += golsCasa + golsContraFora;
 
-    // registrar gols contra
     casa->golsContra += golsContraCasa;
     fora->golsContra += golsContraFora;
 
-    // pontos / vitórias / derrotas / empates
     int totalCasa = golsCasa + golsContraFora;
     int totalFora = golsFora + golsContraCasa;
 
@@ -104,7 +101,7 @@ void listarPartidas(VetPartidas *vet, VetTimes *times) {
         if (idxFora != -1) strcpy(nomeFora, times->itens[idxFora].nome);
 
         if (p.disputada) {
-            printf("ID:%d | %s %d (%d GC) x %d (%d GC) %s | Data: %02d/%02d/%04d\n",
+            printf("ID:%d | %s %d (%d GolsContra) x %d (%d GolsContra) %s | Data: %02d/%02d/%04d\n",
                    p.id, nomeCasa, p.golsCasa, p.golsContraCasa,
                    p.golsFora, p.golsContraFora, nomeFora,
                    p.data.dia, p.data.mes, p.data.ano);
@@ -189,7 +186,7 @@ void removerPartida(VetPartidas *vet) {
     }
     vet->qtd--;
 
-    printf("Partida removida com sucesso!\n");
+    printf("Partida removida!\n");
 }
 
 void carregarPartidas(VetPartidas *vet, const char *nomeArquivo) {
@@ -229,5 +226,3 @@ void salvarPartidas(VetPartidas *vet, const char *nomeArquivo) {
 
     fclose(f);
 }
-
-
