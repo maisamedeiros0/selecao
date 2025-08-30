@@ -16,17 +16,23 @@ int main() {
 
     int opcao;
     do {
-        printf("\n--- CAMPEONATO ESPORTIVO ---\n");
+        printf("\n--- Campeonato Esportivo ---\n");
+        printf("\n");
         printf("1. Inserir Time\n");
         printf("2. Listar Times\n");
         printf("3. Atualizar Time\n");
         printf("4. Remover Time\n");
+        printf("\n");
         printf("5. Inserir Partida\n");
         printf("6. Listar Partidas\n");
         printf("7. Atualizar Partida\n");
         printf("8. Remover Partida\n");
+        printf("\n");
         printf("9. Gerar Classificação\n");
         printf("0. Sair\n");
+        printf("\n");
+        printf("----------------------------\n");
+        printf("\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
@@ -73,3 +79,4 @@ int main() {
 
     return 0;
 }
+
