@@ -11,8 +11,10 @@ typedef struct {
     int id;                
     int idCasa;            
     int idFora;           
-    int golsCasa;
-    int golsFora;
+    int golsCasa;           
+    int golsFora;           
+    int golsContraCasa;     
+    int golsContraFora;     
     Data data;
     int disputada;  
 } Partida;
