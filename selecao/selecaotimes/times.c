@@ -42,7 +42,7 @@ void inserirTime(VetTimes *vet) {
     novo.nome[strcspn(novo.nome, "\n")] = '\0';
 
     novo.pontos = novo.vitorias = novo.empates = novo.derrotas = 0;
-    novo.golsPro = novo.golsContra = 0;
+    novo.golsPro = novo.golsSofridos = novo.golsContra = 0;
 
     vet->itens[vet->qtd++] = novo;
 
@@ -58,9 +58,9 @@ void listarTimes(VetTimes *vet) {
     printf("\n--- Lista de Times ---\n");
     for (int i = 0; i < vet->qtd; i++) {
         Time t = vet->itens[i];
-        printf("ID: %d | Nome: %s | Pontos: %d | Vitorias:%d Empates:%d Derrotas:%d | Gols:%d GolsContra:%d\n",
+        printf("ID: %d | Nome: %s | Pontos: %d | Vitorias:%d Empates:%d Derrotas:%d | GP:%d GS:%d GC:%d\n",
                t.id, t.nome, t.pontos, t.vitorias, t.empates, t.derrotas,
-               t.golsPro, t.golsContra);
+               t.golsPro, t.golsSofridos, t.golsContra);
     }
 }
 
@@ -87,7 +87,7 @@ void atualizarTime(VetTimes *vet) {
     fgets(vet->itens[idx].nome, sizeof(vet->itens[idx].nome), stdin);
     vet->itens[idx].nome[strcspn(vet->itens[idx].nome, "\n")] = '\0';
 
-    printf("Time atualizado com sucesso!\n");
+    printf("Time atualizado!\n");
 }
 
 void removerTime(VetTimes *vet) {
@@ -106,14 +106,14 @@ void removerTime(VetTimes *vet) {
     }
     vet->qtd--;
 
-    printf("Time removido com sucesso!\n");
+    printf("Time removido!\n");
 }
 
 static int compararTimes(const void *a, const void *b) {
     const Time *t1 = (const Time *)a;
     const Time *t2 = (const Time *)b;
-    int saldo1 = t1->golsPro - t1->golsContra;
-    int saldo2 = t2->golsPro - t2->golsContra;
+    int saldo1 = t1->golsPro - t1->golsSofridos;
+    int saldo2 = t2->golsPro - t2->golsSofridos;
 
     if (t1->pontos != t2->pontos) return t2->pontos - t1->pontos;
     if (t1->vitorias != t2->vitorias) return t2->vitorias - t1->vitorias;
@@ -132,12 +132,12 @@ void gerarClassificacao(VetTimes *vet) {
 
     qsort(copia, vet->qtd, sizeof(Time), compararTimes);
 
-    printf("\n--- Classificacao ---\n");
+    printf("\n-- Classificacao --\n");
     for (int i = 0; i < vet->qtd; i++) {
         Time t = copia[i];
-        printf("%dº %s - %d pontos (Vitorias:%d Empates:%d Derrotas:%d | Gols:%d GolsContra:%d)\n",
+        printf("%dº %s - %d pontos (Vitorias:%d Empates:%d Derrotas:%d | GP:%d GS:%d GC:%d)\n",
                i + 1, t.nome, t.pontos, t.vitorias, t.empates, t.derrotas,
-               t.golsPro, t.golsContra);
+               t.golsPro, t.golsSofridos, t.golsContra);
     }
 
     free(copia);
@@ -148,9 +148,9 @@ void carregarTimes(VetTimes *vet, const char *nomeArquivo) {
     if (!f) return;
 
     Time t;
-    while (fscanf(f, "%d;%63[^;];%d;%d;%d;%d;%d;%d\n",
+    while (fscanf(f, "%d;%63[^;];%d;%d;%d;%d;%d;%d;%d\n",
                   &t.id, t.nome, &t.pontos, &t.vitorias, &t.empates,
-                  &t.derrotas, &t.golsPro, &t.golsContra) == 8) {
+                  &t.derrotas, &t.golsPro, &t.golsSofridos, &t.golsContra) == 9) {
         if (vet->qtd == vet->cap) aumentarCapacidade(vet);
         vet->itens[vet->qtd++] = t;
     }
@@ -166,9 +166,9 @@ void salvarTimes(VetTimes *vet, const char *nomeArquivo) {
 
     for (int i = 0; i < vet->qtd; i++) {
         Time t = vet->itens[i];
-        fprintf(f, "%d;%s;%d;%d;%d;%d;%d;%d\n",
+        fprintf(f, "%d;%s;%d;%d;%d;%d;%d;%d;%d\n",
                 t.id, t.nome, t.pontos, t.vitorias, t.empates,
-                t.derrotas, t.golsPro, t.golsContra);
+                t.derrotas, t.golsPro, t.golsSofridos, t.golsContra);
     }
 
     fclose(f);
