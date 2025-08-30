@@ -58,7 +58,7 @@ void listarTimes(VetTimes *vet) {
     printf("\n--- Lista de Times ---\n");
     for (int i = 0; i < vet->qtd; i++) {
         Time t = vet->itens[i];
-        printf("ID: %d | Nome: %s | Pontos: %d | V:%d E:%d D:%d | GP:%d GC:%d\n",
+        printf("ID: %d | Nome: %s | Pontos: %d | Vitorias:%d Empates:%d Derrotas:%d | Gols:%d GolsContra:%d\n",
                t.id, t.nome, t.pontos, t.vitorias, t.empates, t.derrotas,
                t.golsPro, t.golsContra);
     }
@@ -132,10 +132,10 @@ void gerarClassificacao(VetTimes *vet) {
 
     qsort(copia, vet->qtd, sizeof(Time), compararTimes);
 
-    printf("\n=== Classificacao ===\n");
+    printf("\n--- Classificacao ---\n");
     for (int i = 0; i < vet->qtd; i++) {
         Time t = copia[i];
-        printf("%dº %s - %d pontos (V:%d E:%d D:%d | GP:%d GC:%d)\n",
+        printf("%dº %s - %d pontos (Vitorias:%d Empates:%d Derrotas:%d | Gols:%d GolsContra:%d)\n",
                i + 1, t.nome, t.pontos, t.vitorias, t.empates, t.derrotas,
                t.golsPro, t.golsContra);
     }
@@ -173,3 +173,4 @@ void salvarTimes(VetTimes *vet, const char *nomeArquivo) {
 
     fclose(f);
 }
+
