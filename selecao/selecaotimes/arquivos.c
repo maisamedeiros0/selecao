@@ -1,6 +1,7 @@
 #include "times.h"
 #include "partidas.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void carregarTimes(VetTimes *vet, const char *nomeArquivo) {
     FILE *f = fopen(nomeArquivo, "r");
