@@ -67,7 +67,7 @@ int main() {
             case 0:
                 salvarTimes(&times, "times.txt");
                 salvarPartidas(&partidas, "partidas.txt");
-                printf("\nDados salvos. Encerrando...\n");
+                printf("\nEncerrado.\n");
                 break;
             default:
                 printf("\nOpcao invalida!\n");
@@ -79,4 +79,5 @@ int main() {
 
     return 0;
 }
+
 
