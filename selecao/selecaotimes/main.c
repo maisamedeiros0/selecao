@@ -28,7 +28,7 @@ int main() {
         printf("7. Atualizar Partida\n");
         printf("8. Remover Partida\n");
         printf("\n");
-        printf("9. Gerar Classificação\n");
+        printf("9. Gerar Classificacao\n");
         printf("0. Sair\n");
         printf("\n");
         printf("----------------------------\n");
@@ -79,3 +79,4 @@ int main() {
 
     return 0;
 }
+
