@@ -66,9 +66,9 @@ void inserirPartida(VetPartidas *vet, VetTimes *times) {
     scanf("%d", &p.idCasa);
     printf("ID do time visitante: ");
     scanf("%d", &p.idFora);
-
-    if (buscarTimePorId(times, p.idCasa) == -1 || buscarTimePorId(times, p.idFora) == -1) {
-        printf("IDs de times invalidos!\n");
+    
+    if (p.idCasa == p.idFora) {
+        printf("Erro: o mesmo time nao pode jogar contra ele mesmo!\n");
         return;
     }
 
@@ -226,3 +226,4 @@ void salvarPartidas(VetPartidas *vet, const char *nomeArquivo) {
 
     fclose(f);
 }
+
