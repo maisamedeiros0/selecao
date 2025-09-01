@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Realocação dinâmica para expandir a capacidade
 static void aumentarCapacidade(VetPartidas *vet) {
     vet->cap += 10;
     vet->itens = realloc(vet->itens, vet->cap * sizeof(Partida));
@@ -12,10 +13,11 @@ static void aumentarCapacidade(VetPartidas *vet) {
     }
 }
 
+// Atualiza as estatísticas de dois times após uma partida
 static void atualizarEstatisticas(Time *casa, Time *fora,
                                   int golsCasa, int golsFora,
                                   int golsContraCasa, int golsContraFora) {
-    
+
     casa->golsPro     += golsCasa + golsContraFora;
     fora->golsPro     += golsFora + golsContraCasa;
 
@@ -25,6 +27,7 @@ static void atualizarEstatisticas(Time *casa, Time *fora,
     casa->golsContra += golsContraCasa;
     fora->golsContra += golsContraFora;
 
+    // Define vitória, derrota ou empate baseado nos gols totais
     int totalCasa = golsCasa + golsContraFora;
     int totalFora = golsFora + golsContraCasa;
 
@@ -62,11 +65,12 @@ void inserirPartida(VetPartidas *vet, VetTimes *times) {
     Partida p;
     p.id = (vet->qtd == 0) ? 1 : vet->itens[vet->qtd - 1].id + 1;
 
+    // Lê os times envolvidos
     printf("ID do time da casa: ");
     scanf("%d", &p.idCasa);
     printf("ID do time visitante: ");
     scanf("%d", &p.idFora);
-    
+
     if (p.idCasa == p.idFora) {
         printf("Erro: o mesmo time nao pode jogar contra ele mesmo!\n");
         return;
@@ -100,8 +104,9 @@ void listarPartidas(VetPartidas *vet, VetTimes *times) {
         if (idxCasa != -1) strcpy(nomeCasa, times->itens[idxCasa].nome);
         if (idxFora != -1) strcpy(nomeFora, times->itens[idxFora].nome);
 
+        // Exibe partida com ou sem resultado
         if (p.disputada) {
-            printf("ID:%d | %s %d (%d GolsContra) x %d (%d GolsContra) %s | Data: %02d/%02d/%04d\n",
+            printf("ID:%d | %s %d (%d GC) x %d (%d GC) %s | Data: %02d/%02d/%04d\n",
                    p.id, nomeCasa, p.golsCasa, p.golsContraCasa,
                    p.golsFora, p.golsContraFora, nomeFora,
                    p.data.dia, p.data.mes, p.data.ano);
@@ -142,6 +147,8 @@ void atualizarPartida(VetPartidas *vet, VetTimes *times) {
             printf("Essa partida ja foi concluida!\n");
             return;
         }
+
+        // Lê os gols e gols contra dos times
         printf("Gols do time da casa: ");
         scanf("%d", &p->golsCasa);
         printf("Gols contra do time da casa: ");
@@ -153,6 +160,7 @@ void atualizarPartida(VetPartidas *vet, VetTimes *times) {
 
         p->disputada = 1;
 
+        // Atualiza as estatísticas dos times
         int idxCasa = buscarTimePorId(times, p->idCasa);
         int idxFora = buscarTimePorId(times, p->idFora);
 
@@ -164,6 +172,7 @@ void atualizarPartida(VetPartidas *vet, VetTimes *times) {
 
         printf("Resultado registrado!\n");
     } else {
+        // Permite alterar a data da partida
         printf("Nova data (DD MM AAAA): ");
         scanf("%d %d %d", &p->data.dia, &p->data.mes, &p->data.ano);
         printf("Data atualizada!\n");
@@ -181,6 +190,7 @@ void removerPartida(VetPartidas *vet) {
         return;
     }
 
+    // Remove deslocando os elementos à esquerda
     for (int i = idx; i < vet->qtd - 1; i++) {
         vet->itens[i] = vet->itens[i + 1];
     }
@@ -226,4 +236,3 @@ void salvarPartidas(VetPartidas *vet, const char *nomeArquivo) {
 
     fclose(f);
 }
-
