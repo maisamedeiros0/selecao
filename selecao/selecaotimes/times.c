@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Realocação dinâmica para expandir a capacidade
 static void aumentarCapacidade(VetTimes *vet) {
     vet->cap += 10;
     vet->itens = realloc(vet->itens, vet->cap * sizeof(Time));
@@ -12,6 +13,7 @@ static void aumentarCapacidade(VetTimes *vet) {
     }
 }
 
+// Inicializa o vetor de times com capacidade inicial
 void inicializarTimes(VetTimes *vet) {
     vet->qtd = 0;
     vet->cap = 10;
@@ -34,12 +36,13 @@ void inserirTime(VetTimes *vet) {
     }
 
     Time novo;
+    
     novo.id = (vet->qtd == 0) ? 1 : vet->itens[vet->qtd - 1].id + 1;
 
     printf("Nome do time: ");
-    getchar();
+    getchar(); // limpa o buffer
     fgets(novo.nome, sizeof(novo.nome), stdin);
-    novo.nome[strcspn(novo.nome, "\n")] = '\0';
+    novo.nome[strcspn(novo.nome, "\n")] = '\0'; // remove o '\n'
 
     novo.pontos = novo.vitorias = novo.empates = novo.derrotas = 0;
     novo.golsPro = novo.golsSofridos = novo.golsContra = 0;
@@ -109,9 +112,12 @@ void removerTime(VetTimes *vet) {
     printf("Time removido!\n");
 }
 
+// Função auxiliar de comparação usada para ordenação da classificação
 static int compararTimes(const void *a, const void *b) {
     const Time *t1 = (const Time *)a;
     const Time *t2 = (const Time *)b;
+
+    // Critérios de desempate: pontos > vitórias > saldo > gols pró
     int saldo1 = t1->golsPro - t1->golsSofridos;
     int saldo2 = t2->golsPro - t2->golsSofridos;
 
@@ -123,53 +129,4 @@ static int compararTimes(const void *a, const void *b) {
 
 void gerarClassificacao(VetTimes *vet) {
     if (vet->qtd == 0) {
-        printf("Nenhum time cadastrado.\n");
-        return;
-    }
-
-    Time *copia = malloc(vet->qtd * sizeof(Time));
-    memcpy(copia, vet->itens, vet->qtd * sizeof(Time));
-
-    qsort(copia, vet->qtd, sizeof(Time), compararTimes);
-
-    printf("\n-- Classificacao --\n");
-    for (int i = 0; i < vet->qtd; i++) {
-        Time t = copia[i];
-        printf("%dº %s - %d pontos (Vitorias:%d Empates:%d Derrotas:%d | Gols:%d GolsSofridos:%d GolsContra:%d)\n",
-               i + 1, t.nome, t.pontos, t.vitorias, t.empates, t.derrotas,
-               t.golsPro, t.golsSofridos, t.golsContra);
-    }
-
-    free(copia);
-}
-
-void carregarTimes(VetTimes *vet, const char *nomeArquivo) {
-    FILE *f = fopen(nomeArquivo, "r");
-    if (!f) return;
-
-    Time t;
-    while (fscanf(f, "%d;%63[^;];%d;%d;%d;%d;%d;%d;%d\n",
-                  &t.id, t.nome, &t.pontos, &t.vitorias, &t.empates,
-                  &t.derrotas, &t.golsPro, &t.golsSofridos, &t.golsContra) == 9) {
-        if (vet->qtd == vet->cap) aumentarCapacidade(vet);
-        vet->itens[vet->qtd++] = t;
-    }
-    fclose(f);
-}
-
-void salvarTimes(VetTimes *vet, const char *nomeArquivo) {
-    FILE *f = fopen(nomeArquivo, "w");
-    if (!f) {
-        printf("Erro ao salvar arquivo %s\n", nomeArquivo);
-        return;
-    }
-
-    for (int i = 0; i < vet->qtd; i++) {
-        Time t = vet->itens[i];
-        fprintf(f, "%d;%s;%d;%d;%d;%d;%d;%d;%d\n",
-                t.id, t.nome, t.pontos, t.vitorias, t.empates,
-                t.derrotas, t.golsPro, t.golsSofridos, t.golsContra);
-    }
-
-    fclose(f);
-}
+        pri
